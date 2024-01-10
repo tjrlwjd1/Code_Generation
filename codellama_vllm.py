@@ -27,9 +27,13 @@ llm = LLM(
     tensor_parallel_size=2,
 )
 
+num_answer_per_problem = 200
+
 records = []
 for task_id in tqdm.tqdm(problems):
-    prompts_expand = [problems[task_id]["prompt"] for _ in range(200)]
+    prompts_expand = [
+        problems[task_id]["prompt"] for _ in range(num_answer_per_problem)
+    ]
     outputs = llm.generate(prompts_expand, sampling_params=sampling_params)
     for output in outputs:
         completion = output.outputs[0].text
