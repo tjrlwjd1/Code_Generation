@@ -15,7 +15,7 @@ import torch
 from utils import *
 import argparse
 
-client = OpenAI(api_key="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")
+client =OpenAI(your_key)
 
 
 def get_embedding(text, model="text-embedding-3-small"):
