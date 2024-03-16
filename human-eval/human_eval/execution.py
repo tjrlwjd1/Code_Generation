@@ -36,8 +36,13 @@ def check_correctness(
 
             # Construct the check program and run it.
             check_program = (
-                problem["prompt"]
-                + completion
+                # problem["prompt"]
+                # + completion
+                # + "\n"
+                # + problem["test"]
+                # + "\n"
+                # + f"check({problem['entry_point']})"
+                +completion
                 + "\n"
                 + problem["test"]
                 + "\n"

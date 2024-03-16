@@ -1,7 +1,6 @@
 modularize/run.sh
-modularize/run3.sh
-modularize/run2.sh
 
+*.jsonl
 *.pkl
 *.parquet
 *.pyc
@@ -9,3 +8,7 @@ modularize/run2.sh
 *.out
 *.arrow
 *.ipynb
+*.gz
+*pycache*/
+*data*/
+*file*/
