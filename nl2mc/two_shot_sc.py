@@ -200,8 +200,8 @@ def extract_module(original_string):
 
 
 def generate(args):
-    if os.path.exists("file/apps_sc_introductory_answers.pkl"):
-        answers = pickle.load(open("file/apps_sc_introductory_answers.pkl", "rb"))
+    if os.path.exists(f"file/apps_sc_{args.level}_answers.pkl"):
+        answers = pickle.load(open(f"file/apps_sc_{args.level}_answers.pkl", "rb"))
     else:
         STOP = ["\n\n\n\n", "Q:", "A:"]
         sampling_params = SamplingParams(
@@ -225,17 +225,17 @@ def generate(args):
         for i, output in enumerate(outputs):
             gen = output.outputs[0].text
             answers.append(gen)
-        pickle.dump(answers, open("file/apps_sc_introductory_answers.pkl", "wb"))
+        pickle.dump(answers, open(f"file/apps_sc_{args.level}_answers.pkl", "wb"))
 
     return answers
 
 
 def evaluate(answers, args):
-    if os.path.exists("file/apps_sc_introductory_results.json") and os.path.exists(
-        "file/apps_sc_introductory_metrics.json"
+    if os.path.exists(f"file/apps_sc_{args.level}_results.json") and os.path.exists(
+        f"file/apps_sc_{args.level}_metrics.json"
     ):
-        results = json.load(open("file/apps_sc_introductory_results.json", "r"))
-        metrics = json.load(open("file/apps_sc_introductory_metrics.json", "r"))
+        results = json.load(open(f"file/apps_sc_{args.level}_results.json", "r"))
+        metrics = json.load(open(f"file/apps_sc_{args.level}_metrics.json", "r"))
     else:
 
         eval_apps = apps_metric()
@@ -243,8 +243,8 @@ def evaluate(answers, args):
         results, metrics = eval_apps._compute(
             generations, k_list=[args.k], level=args.level
         )
-        json.dump(results, open("file/apps_sc_introductory_results.json", "w"))
-        json.dump(metrics, open("file/apps_sc_introductory_metrics.json", "w"))
+        json.dump(results, open(f"file/apps_sc_{args.level}_results.json", "w"))
+        json.dump(metrics, open(f"file/apps_sc_{args.level}_metrics.json", "w"))
 
     return results, metrics
 
@@ -262,7 +262,7 @@ if __name__ == "__main__":
     parser.add_argument("--gpu", type=int, default=2, help="Number of GPU you'll use")
     parser.add_argument("--k", type=int, default=1, help="k value for apps metric")
     parser.add_argument("--level", type=str, default="introductory", help="Difficulty")
-    parser.add_argument("--temp", type=int, default=0, help="Temperature")
+    parser.add_argument("--temp", type=float, default=0, help="Temperature")
     args = parser.parse_args()
 
     main(args)
