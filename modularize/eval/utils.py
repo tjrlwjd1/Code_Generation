@@ -51,9 +51,9 @@ def evaluate_generations(generations: list, level: str = "all", debug: bool = Fa
     """
 
     # generations are code generations in the same order of the dataset
-    apps_eval = load_dataset(
-        DATASET, split="test", difficulties=[level], trust_remote_code=True
-    )
+    # apps_eval = load_dataset(
+    #     DATASET, split="test", difficulties=[level], trust_remote_code=True
+    # )
     apps_eval = load_dataset(DATASET, split="test", trust_remote_code=True)
 
     if level == "all":
