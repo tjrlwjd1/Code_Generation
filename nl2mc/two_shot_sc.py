@@ -182,7 +182,7 @@ for _ in range(int(input())):
 	print(max(ans,orign))```
 Q: Write a python code to solve the following coding problem that obeys the constraints and passes the example test cases. \
 Please wrap your code answer using ```:
-{problem['question']}
+{problem}
 A:"""
     return prompt
 
@@ -200,8 +200,9 @@ def extract_module(original_string):
 
 
 def generate(args):
-    if os.path.exists(f"file/apps_sc_{args.level}_answers.pkl"):
-        answers = pickle.load(open(f"file/apps_sc_{args.level}_answers.pkl", "rb"))
+    if os.path.exists(f"file/apps_sc_{args.level}_answers.json"):
+        apps_answers = Dataset.from_json(f"file/apps_sc_{args.level}_answers.json")
+
     else:
         STOP = ["\n\n\n\n", "Q:", "A:"]
         sampling_params = SamplingParams(
@@ -218,19 +219,21 @@ def generate(args):
         apps = load_dataset("codeparrot/apps", split="test", trust_remote_code=True)
         apps = apps.filter(lambda x: x["difficulty"] == args.level)
 
-        input = list(map(make_prompt, apps))
+        input = list(map(make_prompt, apps["question"]))
         outputs = llm.generate(input, sampling_params=sampling_params)
 
         answers = []
         for i, output in enumerate(outputs):
             gen = output.outputs[0].text
             answers.append(gen)
-        pickle.dump(answers, open(f"file/apps_sc_{args.level}_answers.pkl", "wb"))
+        generations = [[extract_module(answer)] for answer in answers]
+        apps_answers = apps.add_column("generation", generations)
+        apps_answers.to_json(f"data/apps_sc_{args.level}_answers.json")
 
-    return answers
+    return apps_answers
 
 
-def evaluate(answers, args):
+def evaluate(data, args):
     if os.path.exists(f"file/apps_sc_{args.level}_results.json") and os.path.exists(
         f"file/apps_sc_{args.level}_metrics.json"
     ):
@@ -239,10 +242,8 @@ def evaluate(answers, args):
     else:
 
         eval_apps = apps_metric()
-        generations = [[extract_module(answer)] for answer in answers]
-        results, metrics = eval_apps._compute(
-            generations, k_list=[args.k], level=args.level
-        )
+        results, metrics = eval_apps._compute(data, k_list=[args.k], level=args.level)
+
         json.dump(results, open(f"file/apps_sc_{args.level}_results.json", "w"))
         json.dump(metrics, open(f"file/apps_sc_{args.level}_metrics.json", "w"))
 
