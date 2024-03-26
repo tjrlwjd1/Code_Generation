@@ -37,7 +37,7 @@ def check_correctness(sample, generation, timeout, debug=True):
     return result[0]
 
 
-def evaluate_generations(generations: list, level: str = "all", debug: bool = False):
+def evaluate_generations(data, level: str = "all", debug: bool = False):
     """We take the list of code generations and try to compile them
      and the run their corresponding unit tests which are retrieved from the APPS dataset.
 
@@ -66,9 +66,9 @@ def evaluate_generations(generations: list, level: str = "all", debug: bool = Fa
         apps_eval = apps_eval.filter(lambda x: x["difficulty"] == "interview")
 
     results = {}
-    for index in tqdm(range(len(generations))):
+    for index in tqdm(range(len(data))):
         # code generations for problem (index)
-        problem_generations = generations[index]
+        problem_generations = data["generation"][index]
         # get corresponding samples from APPS dataset
         sample = apps_eval[index]
         res = []
@@ -209,7 +209,7 @@ def get_results(
 
 
 def compute_metrics(
-    generations, level="all", k_list=[1, 10, 100], count_errors=True, debug=False
+    data, level="all", k_list=[1, 10, 100], count_errors=True, debug=False
 ):
     """Return metrics for the given generations.
     Args:
@@ -241,9 +241,9 @@ def compute_metrics(
     {'pass@1': 1.0, 'pass@2': 1.0, 'pass@3': 1.0}
     {'avg_accuracy': None, 'strict_accuracy': None, 'pass_at_k': {'pass@1': 1.0, 'pass@2': 1.0, 'pass@3': 1.0}}
     """
-    results = evaluate_generations(generations, level=level, debug=debug)
+    results = evaluate_generations(data, level=level, debug=debug)
     metrics = get_results(results, count_errors=count_errors, k_list=k_list)
-    return results,metrics
+    return results, metrics
 
 
 # import doctest

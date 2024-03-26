@@ -73,15 +73,16 @@ class apps_metric(evaluate.EvaluationModule):
 
     def _compute(
         self,
-        predictions,
+        data,
         k_list=[1, 10, 100],
         count_errors=True,
         level="all",
         debug=False,
     ):
         """Returns the scores"""
+        # "data" variable must have 'generation' column which consists of list of list
         results, metrics = compute_metrics(
-            predictions,
+            data,
             k_list=k_list,
             count_errors=count_errors,
             level=level,
